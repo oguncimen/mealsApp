@@ -1,21 +1,47 @@
 import React from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Button,
+  ScrollView,
+  Image,
+} from "react-native";
 import { MEALS } from "../data/dummy-data";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import  HeaderButton  from "../components/HeaderButton";
+import HeaderButton from "../components/HeaderButton";
+import DefaultText from "../components/DefaultText";
+const ListItem = (props) => {
+  return (
+    <View style={styles.listItem}>
+      <DefaultText>{props.children}</DefaultText>
+    </View>
+  );
+};
+
 const MealDetailScreen = (props) => {
   const mealId = props.navigation.getParam("mealId");
   const selectedMeal = MEALS.find((meal) => meal.id === mealId);
   return (
-    <View style={styles.screen}>
-      <Text>{selectedMeal.title}</Text>
-      <Button
-        title="Back to main categories!"
-        onPress={() => {
-          props.navigation.popToTop();
-        }}
-      ></Button>
-    </View>
+    <ScrollView>
+      <Image
+        source={{ uri: selectedMeal.imageUrl }}
+        style={styles.image}
+      ></Image>
+      <View style={styles.details}>
+        <DefaultText>{selectedMeal.duration}</DefaultText>
+        <DefaultText>{selectedMeal.complexity.toUpperCase()}</DefaultText>
+        <DefaultText>{selectedMeal.affordability.toUpperCase()}</DefaultText>
+      </View>
+      <Text style={styles.title}>Ingredients</Text>
+      {selectedMeal.ingredients.map((ingredients) => (
+        <ListItem key={ingredients}>{ingredients}</ListItem>
+      ))}
+      <Text style={styles.title}>Steps</Text>
+      {selectedMeal.steps.map((steps) => (
+        <ListItem key={steps}>{steps}</ListItem>
+      ))}
+    </ScrollView>
   );
 };
 MealDetailScreen.navigationOptions = (navigationData) => {
@@ -23,18 +49,37 @@ MealDetailScreen.navigationOptions = (navigationData) => {
   const selectedMeal = MEALS.find((meal) => meal.id === mealId);
   return {
     headerTitle: selectedMeal.title,
-    headerRight:()=> (
+    headerRight: () => (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
-        <Item title="Favorite" iconName="ios-star" onPress={()=>{}}></Item>
+        <Item title="Favorite" iconName="ios-star" onPress={() => {}}></Item>
       </HeaderButtons>
     ),
   };
 };
 const styles = StyleSheet.create({
-  screen: {
+  image: {
+    width: "100%",
+    height: 200,
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  details: {
+    flexDirection: "row",
+    padding: 15,
+    justifyContent: "space-around",
+  },
+  title: {
+    fontFamily: "open-sans-bold",
+    fontSize: 22,
+    textAlign: "center",
+  },
+  listItem: {
+    marginVertical: 10,
+    marginHorizontal: 20,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    padding: 10,
   },
 });
 

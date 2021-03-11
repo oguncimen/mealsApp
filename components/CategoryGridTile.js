@@ -29,7 +29,7 @@ const categoryGridTile = (props) => {
 const styles = StyleSheet.create({
   gridItem: {
     flex: 1,
-    margin: 15,
+    margin: 9,
     height: 150,
     borderRadius: 10,
     overflow: "hidden",

@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
-
 const MealItem = (props) => {
   return (
     <View style={styles.mealItem}>
@@ -24,11 +23,7 @@ const MealItem = (props) => {
               </View>
             </ImageBackground>
           </View>
-          <View style={{ ...styles.mealRow, ...styles.mealDetail }}>
-            <Text>{props.duration}m</Text>
-            <Text>{props.complexity.toUpperCase()}</Text>
-            <Text>{props.affordability.toUpperCase()}</Text>
-          </View>
+          
         </View>
       </TouchableOpacity>
     </View>
@@ -39,10 +34,10 @@ const styles = StyleSheet.create({
     height: 200,
     width: "100%",
     backgroundColor: "#f5f5f5",
-    borderRadius:10,
-    //No child item can go outside of this shape --> overflow meaning 
-    overflow:'hidden',
-    marginVertical:10
+    borderRadius: 10,
+    //No child item can go outside of this shape --> overflow meaning
+    overflow: "hidden",
+    marginVertical: 10,
   },
   titleContainer: {
     backgroundColor: "rgba(0,0,0,0.3)",
@@ -70,8 +65,8 @@ const styles = StyleSheet.create({
   mealDetail: {
     paddingHorizontal: 10,
     justifyContent: "space-between",
-    alignItems:'center',
-    height:'15%'
+    alignItems: "center",
+    height: "15%",
   },
 });
 
