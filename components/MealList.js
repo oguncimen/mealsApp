@@ -1,27 +1,35 @@
 import React from "react";
-import { View, StyleSheet,FlatList } from "react-native";
-import MealItem from './MealItem';
+import { View, StyleSheet, FlatList } from "react-native";
+import MealItem from "./MealItem";
+import { useSelector } from "react-redux";
 
 const MealList = (props) => {
-    const renderMealItem = (itemData) => {
-        return (
-          <MealItem
-            title={itemData.item.title}
-            duration={itemData.item.duration}
-            affordability={itemData.item.affordability}
-            complexity={itemData.item.complexity}
-            image={itemData.item.imageUrl}
-            onSelectMeal={() => {
-              props.navigation.navigate({
-                routeName: "MealDetail",
-                params: {
-                  mealId: itemData.item.id,
-                },
-              });
-            }}
-          ></MealItem>
-        );
-      };
+  const favoriteMeals = useSelector((state) => state.meals.favoriteMeals);
+  const renderMealItem = (itemData) => {
+    const isFavorite = favoriteMeals.some(
+      (meal) => meal.id === itemData.item.id
+    );
+    console.log(isFavorite);
+    return (
+      <MealItem
+        title={itemData.item.title}
+        duration={itemData.item.duration}
+        affordability={itemData.item.affordability}
+        complexity={itemData.item.complexity}
+        image={itemData.item.imageUrl}
+        onSelectMeal={() => {
+          props.navigation.navigate({
+            routeName: "MealDetail",
+            params: {
+              mealId: itemData.item.id,
+              mealTitle: itemData.item.title,
+              isFav: isFavorite,
+            },
+          });
+        }}
+      ></MealItem>
+    );
+  };
   return (
     <View style={styles.screen}>
       <FlatList

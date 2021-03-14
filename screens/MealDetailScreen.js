@@ -1,16 +1,12 @@
-import React from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  Button,
-  ScrollView,
-  Image,
-} from "react-native";
-import { MEALS } from "../data/dummy-data";
+import React, { useEffect } from "react";
+import { Text, View, StyleSheet, ScrollView, Image } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/HeaderButton";
 import DefaultText from "../components/DefaultText";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleFavorite } from "../store/actions/meals";
+import { useCallback } from "react/cjs/react.development";
+
 const ListItem = (props) => {
   return (
     <View style={styles.listItem}>
@@ -20,8 +16,32 @@ const ListItem = (props) => {
 };
 
 const MealDetailScreen = (props) => {
+  const availableMeals = useSelector((state) => state.meals.meals);
   const mealId = props.navigation.getParam("mealId");
-  const selectedMeal = MEALS.find((meal) => meal.id === mealId);
+//mealId si state'te var ise const' a atıyor
+  const currentMealIsFavorite = useSelector((state) =>
+    state.meals.favoriteMeals.some((meal) => meal.id === mealId)
+  );
+
+  const selectedMeal = availableMeals.find((meal) => meal.id === mealId);
+
+  const dispatch = useDispatch();
+  const toggleFavoriteHandler = useCallback(() => {
+    dispatch(toggleFavorite(mealId));
+  }, [dispatch, mealId]);
+
+  //selectedMeal değiştiğinde useEffect çalışıyor ve seçilen meal in title'ı nı set ediyor.
+  //fakat selectedMeal componenti yüklendikten sonra title değiştiği için başlık ekrana geç geliyor.-->
+  useEffect(() => {
+    // props.navigation.setParams({mealTitle:selectedMeal.title});
+    props.navigation.setParams({ toggleFav: toggleFavoriteHandler });
+  }, [selectedMeal]);
+
+  useEffect(() => {
+    //currentMealIsFavorite değiştiğinde navigation parametresini set ediyor
+    props.navigation.setParams({ isFav: currentMealIsFavorite });
+  }, [currentMealIsFavorite]);
+
   return (
     <ScrollView>
       <Image
@@ -45,13 +65,21 @@ const MealDetailScreen = (props) => {
   );
 };
 MealDetailScreen.navigationOptions = (navigationData) => {
-  const mealId = navigationData.navigation.getParam("mealId");
-  const selectedMeal = MEALS.find((meal) => meal.id === mealId);
+  const mealTitle = navigationData.navigation.getParam("mealTitle");
+  const toggleFavorite = navigationData.navigation.getParam("toggleFav");
+  //set edilen navigation parametresi alınıyor 
+  const isFavorite = navigationData.navigation.getParam("isFav");
+
   return {
-    headerTitle: selectedMeal.title,
+    headerTitle: mealTitle,
     headerRight: () => (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
-        <Item title="Favorite" iconName="ios-star" onPress={() => {}}></Item>
+        <Item
+          title="Favorite"
+          //parametre true ise -->          
+          iconName={isFavorite ? "ios-star" : "ios-star-outline"}
+          onPress={toggleFavorite}
+        ></Item>
       </HeaderButtons>
     ),
   };
